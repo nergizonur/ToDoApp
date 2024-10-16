@@ -112,8 +112,10 @@
     <Content Include="css\bootstrap.rtl.css" />
     <Content Include="css\bootstrap.rtl.min.css" />
     <Content Include="Global.asax" />
+    <Content Include="images\background-1481478_1280.jpg" />
     <Content Include="images\dark-gray-acrylic-painting-wallpaper-image.jpg" />
     <Content Include="images\gradient-bokeh-digital-business-wallpaper.jpg" />
+    <Content Include="images\sunset-8064078_1280.jpg" />
     <Content Include="js\bootstrap.bundle.js" />
     <Content Include="js\bootstrap.bundle.min.js" />
     <Content Include="js\bootstrap.esm.js" />

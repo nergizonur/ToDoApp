@@ -5,7 +5,6 @@
 }
 
 <!DOCTYPE html>
-
 <html class="w-100 h-100">
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -16,6 +15,7 @@
         .taskBox {
             cursor: pointer;
         }
+
         /* Modal stilleri */
         .modal {
             display: none;
@@ -31,7 +31,6 @@
         .modal-content {
             background-color: white;
             margin: 15% auto;
-            padding: 20px;
             border: 1px solid #888;
             width: 30%;
         }
@@ -51,73 +50,127 @@
             }
     </style>
 </head>
-<body class="w-100 h-100" style="background-image: url(../../images/dark-gray-acrylic-painting-wallpaper-image.jpg)">
+<body class="w-100 h-100 bg-success-subtle">
     <div class="w-100 h-100">
         <div class="row d-flex justify-content-center">
             <div class="col-6 pt-5">
                 <form method="post" action="/Home/TaskAdd">
                     <div class="row align-items-center">
-                        <div class="col-9">
-                            <input type="text" name="taskText" class="form-control" placeholder="Görevinizi Giriniz" />
+                        <div class="col-8">
+                            <input type="text" name="taskText" class="form-control bg-light-subtle" placeholder="Görevinizi Giriniz" />
                         </div>
                         <div class="col-3">
                             <input type="submit" value="Ekle" class="btn btn-success" />
                         </div>
                     </div>
                 </form>
-                <div class="mt-5">
-                    @foreach (Task task in Model)
-                    {
-                        <div class="rounded-3 bg-white py-1 ps-5 pe-3 shadow mb-3 taskBox">
-                            <div class="row align-items-center">
-                                <div class="col-9">
-                                    @task.TaskText
+                <div class="row">
+                    <div class="col-10">
+                        <div class="mt-5">
+                            @for (int i = 0; i <= Model.ToList().Count - 1; i++)
+                            {
+                                <div class="rounded-3 bg-white py-1 px-3 shadow mb-3 taskBox">
+                                    <div class="row align-items-center">
+                                        <div class="col-1 text-start text-secondary">
+                                            @(i+1).
+                                        </div>
+                                        <div class="col-9">
+                                            @Model.ToList()[i].TaskText
+                                        </div>
+                                        <div class="col-2 ">
+                                            <div class="d-flex justify-content-end">
+                                                <button type="button" class="btn btn-danger me-3" onclick="openModal('@Model.ToList()[i].Id')">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary" onclick="openUpdateModal('@Model.ToList()[i].Id', '@Model.ToList()[i].TaskText')">
+                                                    <i class="fa-solid fa-pencil"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-3">
-                                    <button type="button" class="btn btn-danger" onclick="openModal('@task.Id')">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
+                            }
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Silme Modalı -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <p>Bu Görevi Silmek İstiyor Musunuz?</p>
-            <form id="deleteForm" method="post" action="/Home/DeleteTask">
-                <input type="hidden" id="taskId" name="taskId" value="" />
-                <button type="submit" class="btn btn-danger">Evet</button>
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Hayır</button>
-            </form>
+            <span class="close mx-3">&times;</span>
+            <div class="py-3">
+                <p class="text-center">Bu Görevi Silmek İstiyor Musunuz?</p>
+                <form id="deleteForm" method="post" action="/Home/DeleteTask">
+                    <input type="hidden" id="taskId" name="taskId" value="" />
+                    <div class="d-flex justify-content-center mb-3">
+                        <button type="submit" class="btn text-center btn-danger me-3">Evet</button>
+                        <button type="button" class="btn btn-secondary text-center" onclick="closeModal()">Hayır</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close mx-3">&times;</span>
+            <div class="py-3">
+                <p class="text-center">Bu Görevi Güncellemek İstiyor Musunuz?</p>
+                <form id="updateForm" method="post" action="/Home/UpdateTask">
+                    <input type="hidden" id="updateTaskId" name="taskId" value="" />
+                    <div class="d-flex justify-content-center mb-3">
+                        <input type="text" id="updateTaskText" name="taskText" class="form-control mx-3" value="" />
+                    </div>
+                    <div class="d-flex justify-content-center mb-3">
+                        <button type="submit" class="btn text-center btn-success me-3">Güncelle</button>
+                        <button type="button" class="btn btn-secondary text-center" onclick="closeUpdateModal()">İptal</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script>
-        var modal = document.getElementById("deleteModal");
-        var span = document.getElementsByClassName("close")[0];
+        var deleteModal = document.getElementById("deleteModal");
+        var updateModal = document.getElementById("updateModal");
+        var spanDelete = document.getElementsByClassName("close")[0];
+        var spanUpdate = document.getElementsByClassName("close")[1];
 
         function openModal(taskId) {
             document.getElementById("taskId").value = taskId;
-            modal.style.display = "block";
+            deleteModal.style.display = "block";
         }
 
         function closeModal() {
-            modal.style.display = "none";
+            deleteModal.style.display = "none";
         }
 
-        span.onclick = function () {
-            modal.style.display = "none";
+        function openUpdateModal(taskId, taskText) {
+            document.getElementById("updateTaskId").value = taskId;
+            document.getElementById("updateTaskText").value = taskText;
+            updateModal.style.display = "block";
+        }
+
+        function closeUpdateModal() {
+            updateModal.style.display = "none";
+        }
+
+        spanDelete.onclick = function () {
+            deleteModal.style.display = "none";
+        }
+
+        spanUpdate.onclick = function () {
+            updateModal.style.display = "none";
         }
 
         window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+            if (event.target == deleteModal) {
+                deleteModal.style.display = "none";
+            } else if (event.target == updateModal) {
+                updateModal.style.display = "none";
             }
         }
     </script>
