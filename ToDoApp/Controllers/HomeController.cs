@@ -12,14 +12,23 @@ namespace ToDoApp.Controllers
     {
         DatabaseContext databaseContext = new DatabaseContext();
         // GET: Home
-        public ActionResult Index()
+
+
+
+     
+
+        public ActionResult Index(string id)
         {
-            return View(databaseContext.Tasks.ToList());
+            HttpCookie userCookie = Request.Cookies["UserId"];
+            string userId = userCookie.Value;
+            return View(databaseContext.Tasks.Where(task=>task.UserId.ToString()==userId).ToList());
         }
 
         public ActionResult TaskAdd(string taskText)
         {
-            Task task = new Task() { TaskText=taskText.Trim()};
+            HttpCookie userCookie = Request.Cookies["UserId"];
+            string userId = userCookie.Value;
+            Task task = new Task() { TaskText=taskText.Trim(),UserId=userId};
             databaseContext.Tasks.Add(task);
             databaseContext.SaveChanges();
             return RedirectToAction("Index");

@@ -16,7 +16,11 @@
             cursor: pointer;
         }
 
-        /* Modal stilleri */
+        
+        html,body{
+            overflow-x:hidden;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -53,7 +57,7 @@
 <body class="w-100 h-100 bg-success-subtle">
     <div class="w-100 h-100">
         <div class="row d-flex justify-content-center">
-            <div class="col-6 pt-5">
+            <div class="col-6 pt-5 taskDiv">
                 <form method="post" action="/Home/TaskAdd">
                     <div class="row align-items-center">
                         <div class="col-8">
@@ -176,5 +180,8 @@
     </script>
 
     <script src="~/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="~/scripts/auth.js"></script>
+
 </body>
 </html>

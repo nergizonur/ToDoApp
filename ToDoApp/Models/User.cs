@@ -5,12 +5,12 @@ using System.Web;
 
 namespace ToDoApp.Models
 {
-    public class Task
+    public class User
     {
         public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
 
-        public string TaskText { get; set; }
-
-        public string UserId { get; set; }
     }
 }
