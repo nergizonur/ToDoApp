@@ -11,5 +11,7 @@ namespace ToDoApp.Models
         public DbSet<Task> Tasks { get; set; }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<OrderColor> Colors { get; set; }
     }
 }

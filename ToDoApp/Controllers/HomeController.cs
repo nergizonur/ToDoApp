@@ -11,27 +11,30 @@ namespace ToDoApp.Controllers
     public class HomeController : Controller
     {
         DatabaseContext databaseContext = new DatabaseContext();
-        // GET: Home
-
-
-
-     
 
         public ActionResult Index(string id)
         {
             HttpCookie userCookie = Request.Cookies["UserId"];
-            string userId = userCookie.Value;
-            return View(databaseContext.Tasks.Where(task=>task.UserId.ToString()==userId).ToList());
+            string userId = userCookie?.Value;
+            List<Task> tasks = databaseContext.Tasks.Where(task => task.UserId.ToString() == userId).ToList();
+            return View(tasks);
         }
 
-        public ActionResult TaskAdd(string taskText)
+        public ActionResult TaskAdd(Task task)
         {
             HttpCookie userCookie = Request.Cookies["UserId"];
-            string userId = userCookie.Value;
-            Task task = new Task() { TaskText=taskText.Trim(),UserId=userId};
-            databaseContext.Tasks.Add(task);
-            databaseContext.SaveChanges();
+            string userId = userCookie?.Value;
+            task.UserId = userId;
+            ModelState.Clear();
+
+            if (TryValidateModel(task, nameof(Task)))
+            {
+                databaseContext.Tasks.Add(task);
+                databaseContext.SaveChanges();
+            }
+            
             return RedirectToAction("Index");
+
         }
 
         public ActionResult DeleteTask(string taskId)
@@ -47,7 +50,7 @@ namespace ToDoApp.Controllers
             databaseContext.SaveChanges();
             return RedirectToAction("Index");
         }
-        public ActionResult UpdateTask(string taskId,string taskText)
+        public ActionResult UpdateTask(string taskId,string taskText,int orderScore)
         {
 
             foreach (Task task in databaseContext.Tasks)
@@ -55,6 +58,7 @@ namespace ToDoApp.Controllers
                 if (task.Id == int.Parse(taskId))
                 {
                     task.TaskText = taskText.Trim();
+                    task.OrderScore = orderScore;
                 }
             }
             databaseContext.SaveChanges();
